@@ -146,11 +146,9 @@ class _HomePageState extends State<HomePage> {
         label: 'Undo',
         onPressed: () {
           if (_recentlyDeletedTask != null) {
-            // If we still have the original key, use it to restore the task
             if (key is int) {
               taskBox.put(key, _recentlyDeletedTask!);
             } else {
-              // Fallback: add to end if key is missing (shouldn't happen normally)
               taskBox.add(_recentlyDeletedTask!);
             }
           }
