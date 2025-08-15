@@ -133,24 +133,32 @@ class _HomePageState extends State<HomePage> {
   }
 
   void _deleteTask(int index) {
-    _recentlyDeletedTask = taskBox.getAt(index);
-    _recentlyDeletedIndex = index;
-    taskBox.deleteAt(index);
+  final key = taskBox.keyAt(index);
+  _recentlyDeletedTask = taskBox.getAt(index);
+  _recentlyDeletedIndex = index;
 
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: const Text('Task deleted'),
-        action: SnackBarAction(
-          label: 'Undo',
-          onPressed: () {
-            if (_recentlyDeletedTask != null && _recentlyDeletedIndex != null) {
-              taskBox.putAt(_recentlyDeletedIndex!, _recentlyDeletedTask!);
+  taskBox.deleteAt(index);
+
+  ScaffoldMessenger.of(context).showSnackBar(
+    SnackBar(
+      content: const Text('Task deleted'),
+      action: SnackBarAction(
+        label: 'Undo',
+        onPressed: () {
+          if (_recentlyDeletedTask != null) {
+            // If we still have the original key, use it to restore the task
+            if (key is int) {
+              taskBox.put(key, _recentlyDeletedTask!);
+            } else {
+              // Fallback: add to end if key is missing (shouldn't happen normally)
+              taskBox.add(_recentlyDeletedTask!);
             }
-          },
-        ),
+          }
+        },
       ),
-    );
-  }
+    ),
+  );
+}
 
 Map<String, List<TaskModel>> _groupTasksByDate(List<TaskModel> tasks) {
   Map<String, List<TaskModel>> groupedTasks = {};
